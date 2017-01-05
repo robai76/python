@@ -32,11 +32,11 @@ def receive_from(connection):
 
 	try:
 
-			while True:
-				data = connection.recv(4096)
+		while True:
+			data = connection.recv(4096)
 
-				if not data:
-					break
+			if not data:
+				break
 				buffer += data
 
 	except:
@@ -57,11 +57,12 @@ def reponse_handler(buffer):
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
 
 	remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		remote_socket.connect((remote_host, remote_port))
+	remote_socket.connect((remote_host, remote_port))
+
 	if receive_first:
 
-			remote_buffer = receive_from(remote_socket)
-			hexdump(remote_buffer)
+		remote_buffer = receive_from(remote_socket)
+		hexdump(remote_buffer)
 
 	remote_buffer = response_handler(remote_buffer)
 
@@ -69,38 +70,38 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
 		print "[<==] Sending %d bytes to localhost." % len(remote_buffer)
 		client_socket.send(remote_buffer)
 
-## Boucle pour reception, envoie, reception de donnees
+   ## Boucle pour reception, envoie, reception de donnees
 
-while True:
+	while True:
 	
-	local_buffer = receive_from(client_socket)
+		local_buffer = receive_from(client_socket)
 
-	if len(local_buffer):
-		print "[==>] Received %d bytes from localhost." % len(local_buffer)
-		hexdump(local_buffer)
+		if len(local_buffer):
+			print "[==>] Received %d bytes from localhost." % len(local_buffer)
+			hexdump(local_buffer)
 
-		local_buffer = request_handler(local_buffer)
+			local_buffer = request_handler(local_buffer)
 
-		remote_socket.send(local_buffer)
-		print "[==>] Sent to remote."
+			remote_socket.send(local_buffer)
+			print "[==>] Sent to remote."
 
-	remote_buffer = receive_from(remote_socket)
+		remote_buffer = receive_from(remote_socket)
 
-	if len(remote_buffer):
+		if len(remote_buffer):
 
-		print "[<==] Received %d bytes from remote." % len(remote_buffer)
-		hexdump(remote_buffer)
+			print "[<==] Received %d bytes from remote." % len(remote_buffer)
+			hexdump(remote_buffer)
 
-		remote_buffer = response_handler(remote_buffer)
-		client_socket.send(remote_buffer)
-		print "[<==] Send to localhost."
+			remote_buffer = response_handler(remote_buffer)
+			client_socket.send(remote_buffer)
+			print "[<==] Send to localhost."
 
-	if not len(local_buffer) or not len(remote_buffer):
-				client_socket.close()
-				remote_socket.close()
-				print"[*] No more data. Closing connections."
+		if not len(local_buffer) or not len(remote_buffer):
+			client_socket.close()
+			remote_socket.close()
+			print"[*] No more data. Closing connections."
 
-				break
+			break
 
 ## Fonction attente de connection
 
@@ -115,7 +116,7 @@ def server_loop(local_host, local_port, remote_host, remote_port, receive_first)
 			print "[!!] Failed to listen on %s:%d" % (local_host,local_port)
 			print "[!a!] Check for other listening sockets or correct permissions."
 
-					sys.exit(0)
+			sys.exit(0)
 
 	print "[*] Listening on %s:%d" % (local_host,local_port)
 
@@ -125,7 +126,7 @@ def server_loop(local_host, local_port, remote_host, remote_port, receive_first)
 		
 		client_socket, addr = server.accept()
 
-				print "[==>} Received incoming connection from %s:%d" % (addr[0], addr[1])
+		print "[==>} Received incoming connection from %s:%d" % (addr[0], addr[1])
 
 		proxy_thread = threading.Thread(target= proxy_handler,args= (client_socket,remote_host,remote_port,receive_first))
 
